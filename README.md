@@ -13,12 +13,13 @@
 
 ```bash
 pip install yfinance
+```
+
 ### 2️⃣ 下載資料並轉換格式（含 TimeIndex）
-python
-複製
-編輯
+```python
 import yfinance as yf
 import pandas as pd
+
 
 # 設定股票代碼與時間區間
 ticker = "AMZN"
@@ -34,20 +35,18 @@ data['TimeIndex'] = (data['Date'] - data['Date'].min()).dt.days
 
 # 儲存成 CSV 檔
 data.to_csv("AMZN_20150101_to_20250101.csv", index=False)
-print("✅ 資料已儲存為 AMZN_20150101_to_20250101.csv")
+print("AMZN_20150101_to_20250101.csv")
+```
 
 ## 📈 K 線圖產出流程
 以 Amazon (AMZN) 為例：
 
 ### 1️⃣ 安裝套件
-bash
-複製
-編輯
+```bash
 pip install yfinance mplfinance
+```
 ### 2️⃣ 產生 K 線圖
-python
-複製
-編輯
+```python
 import yfinance as yf
 import mplfinance as mpf
 
@@ -57,11 +56,10 @@ df = amzn.history(start="2015-01-01", end="2025-01-01")
 
 # 繪製 K 線圖（含成交量）
 if df.empty:
-    print("❌ 資料下載失敗")
+    print("FAIL")
 else:
     mpf.plot(df, type='candle', style='charles', title='AMZN', volume=True)
-📁 輸出說明
-AMZN_20150101_to_20250101.csv：Amazon 從 2015 年至 2025 年的日股價資料，含 TimeIndex 欄位
-
-
-## 如果還要加入其他公司（AAPL、META 等），只需將程式中 `"AMZN"` 替換為其他代碼即可。  
+```
+## 📁 備註
+1. AMZN_20150101_to_20250101.csv：Amazon 從 2015 年至 2025 年的日股價資料，含 TimeIndex 欄位
+2. 如果還要加入其他公司（`AAPL`、`META` 等），只需將程式中 `"AMZN"` 替換為其他代碼即可。  
