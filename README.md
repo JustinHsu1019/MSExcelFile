@@ -13,7 +13,7 @@
 
 ```bash
 pip install yfinance
-2️⃣ 下載資料並轉換格式（含 TimeIndex）
+### 2️⃣ 下載資料並轉換格式（含 TimeIndex）
 python
 複製
 編輯
@@ -35,15 +35,16 @@ data['TimeIndex'] = (data['Date'] - data['Date'].min()).dt.days
 # 儲存成 CSV 檔
 data.to_csv("AMZN_20150101_to_20250101.csv", index=False)
 print("✅ 資料已儲存為 AMZN_20150101_to_20250101.csv")
-📈 K 線圖產出流程
+
+## 📈 K 線圖產出流程
 以 Amazon (AMZN) 為例：
 
-1️⃣ 安裝套件
+### 1️⃣ 安裝套件
 bash
 複製
 編輯
 pip install yfinance mplfinance
-2️⃣ 產生 K 線圖
+### 2️⃣ 產生 K 線圖
 python
 複製
 編輯
@@ -62,10 +63,5 @@ else:
 📁 輸出說明
 AMZN_20150101_to_20250101.csv：Amazon 從 2015 年至 2025 年的日股價資料，含 TimeIndex 欄位
 
-K 線圖：視覺化每日股價變化（Open, High, Low, Close）與成交量，用於報告或簡報展示
 
-arduino
-複製
-編輯
-
-如果你還要加入其他公司（AAPL、META 等），只需將程式中 `"AMZN"` 替換為其他代碼即可。  
+## 如果還要加入其他公司（AAPL、META 等），只需將程式中 `"AMZN"` 替換為其他代碼即可。  
