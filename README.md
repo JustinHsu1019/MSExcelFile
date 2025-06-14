@@ -1,21 +1,21 @@
-# 📊 FAANMG 股票資料分析：資料與圖表來源說明
+# FAANMG 股票資料分析：資料與圖表來源說明
 
 本專案使用 `yfinance` 下載美國六大科技股（FAANMG：META、AAPL、AMZN、NFLX、MSFT、GOOGL）之每日股價資料，並產出 K 線圖作為分析輔助。
 
 ---
 
-## 📥 資料下載流程
+## 資料下載流程
 
 以 Amazon (AMZN) 為例：
 
-### 1️⃣ 安裝套件
+### 安裝套件
 請先於終端機安裝 `yfinance` 套件：
 
 ```bash
 pip install yfinance
 ```
 
-### 2️⃣ 下載資料並轉換格式（含 TimeIndex）
+### 下載資料並轉換格式（含 TimeIndex）
 ```python
 import yfinance as yf
 import pandas as pd
@@ -38,14 +38,14 @@ data.to_csv("AMZN_20150101_to_20250101.csv", index=False)
 print("AMZN_20150101_to_20250101.csv")
 ```
 
-## 📈 K 線圖產出流程
+## K 線圖產出流程
 以 Amazon (AMZN) 為例：
 
-### 1️⃣ 安裝套件
+### 安裝套件
 ```bash
 pip install yfinance mplfinance
 ```
-### 2️⃣ 產生 K 線圖
+### 產生 K 線圖
 ```python
 import yfinance as yf
 import mplfinance as mpf
@@ -60,6 +60,6 @@ if df.empty:
 else:
     mpf.plot(df, type='candle', style='charles', title='AMZN', volume=True)
 ```
-## 📁 備註
+## 備註
 1. AMZN_20150101_to_20250101.csv：Amazon 從 2015 年至 2025 年的日股價資料，含 TimeIndex 欄位
 2. 如果還要加入其他公司（`AAPL`、`META` 等），只需將程式中 `"AMZN"` 替換為其他代碼即可。  
