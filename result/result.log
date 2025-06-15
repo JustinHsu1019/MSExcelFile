@@ -1,7 +1,9 @@
 (pocai) justin.hsu@JustindeMacBook-Pro MSExcelFile % python3 src/main.py
+🚀 開始股票收益預測分析...
+============================================================
 
 ======= Analyzing AAPL =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Set parameter Username
@@ -20,23 +22,26 @@ Budget 5: CV-MAE = 0.003001
 Budget 10: CV-MAE = 0.003001
 Budget 20: CV-MAE = 0.003001
 Budget 50: CV-MAE = 0.003001
-✅ Part II: Best budget = 10, CV-MAE = 0.003001
+✅ Part II: Best budget = 20, CV-MAE = 0.003001
 
 Significant coefficients:
   MA5: -1.3009
-  Return_lag1: -0.7700
-  Return_lag2: -0.4335
-  H_Volatility_0.0085: 0.2458
-  H_MA5_-0.0219: 0.1516
-Fold 1: Coverage = 0.8700, Mean MSIS = 20.9729
-Fold 2: Coverage = 0.8520, Mean MSIS = 27.7674
-Fold 3: Coverage = 0.7495, Mean MSIS = 28.8007
-Fold 4: Coverage = 0.8016, Mean MSIS = 21.1895
-Fold 5: Coverage = 0.8297, Mean MSIS = 17.9952
-✅ Part III: Coverage = 0.8206, MSIS = 23.3460
+  Return_lag1: -0.7701
+  Return_lag2: -0.4334
+  H_Volatility_0.0085: 0.2456
+  H_MA5_-0.0219: 0.1514
+Fold 1: Coverage = 0.8880, Mean MSIS = 20.3591
+Fold 2: Coverage = 0.8480, Mean MSIS = 27.9394
+Fold 3: Coverage = 0.7816, Mean MSIS = 29.7824
+Fold 4: Coverage = 0.7856, Mean MSIS = 21.6410
+Fold 5: Coverage = 0.8337, Mean MSIS = 17.9169
+✅ Part III: Coverage = 0.8274, MSIS = 23.5283
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/AAPL_visualizations
 
 ======= Analyzing AMZN =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Fold 1: MAE = 0.003636
@@ -60,15 +65,18 @@ Significant coefficients:
   Return_lag2: -0.4589
   H_Return_lag2_0.0111: -0.1830
   H_Volatility_0.0067: -0.1511
-Fold 1: Coverage = 0.8840, Mean MSIS = 19.6296
-Fold 2: Coverage = 0.8560, Mean MSIS = 22.1699
-Fold 3: Coverage = 0.8337, Mean MSIS = 30.6247
-Fold 4: Coverage = 0.8838, Mean MSIS = 25.2521
-Fold 5: Coverage = 0.8958, Mean MSIS = 15.6224
-✅ Part III: Coverage = 0.8706, MSIS = 22.6583
+Fold 1: Coverage = 0.8800, Mean MSIS = 19.1175
+Fold 2: Coverage = 0.8580, Mean MSIS = 22.0100
+Fold 3: Coverage = 0.8497, Mean MSIS = 30.8412
+Fold 4: Coverage = 0.8717, Mean MSIS = 24.9289
+Fold 5: Coverage = 0.9158, Mean MSIS = 15.4054
+✅ Part III: Coverage = 0.8751, MSIS = 22.4591
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/AMZN_visualizations
 
 ======= Analyzing GOOGL =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Fold 1: MAE = 0.003072
@@ -92,15 +100,18 @@ Significant coefficients:
   Return_lag2: -0.4415
   H_Volatility_0.0128: 0.1720
   H_MA5_0.0081: -0.1168
-Fold 1: Coverage = 0.8560, Mean MSIS = 20.9806
-Fold 2: Coverage = 0.8940, Mean MSIS = 32.9871
-Fold 3: Coverage = 0.8617, Mean MSIS = 31.0091
-Fold 4: Coverage = 0.8898, Mean MSIS = 18.7629
-Fold 5: Coverage = 0.9078, Mean MSIS = 25.6540
-✅ Part III: Coverage = 0.8819, MSIS = 25.8796
+Fold 1: Coverage = 0.8600, Mean MSIS = 21.0644
+Fold 2: Coverage = 0.8920, Mean MSIS = 32.8772
+Fold 3: Coverage = 0.8457, Mean MSIS = 31.1982
+Fold 4: Coverage = 0.8798, Mean MSIS = 19.3356
+Fold 5: Coverage = 0.8998, Mean MSIS = 25.7505
+✅ Part III: Coverage = 0.8755, MSIS = 26.0459
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/GOOGL_visualizations
 
 ======= Analyzing META =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Fold 1: MAE = 0.003633
@@ -124,15 +135,18 @@ Significant coefficients:
   Return_lag2: -0.4956
   H_MA5_-0.0255: 0.2113
   H_Return_lag1_-0.0089: 0.1432
-Fold 1: Coverage = 0.9060, Mean MSIS = 21.1767
-Fold 2: Coverage = 0.8820, Mean MSIS = 33.1309
-Fold 3: Coverage = 0.8477, Mean MSIS = 53.2990
-Fold 4: Coverage = 0.8657, Mean MSIS = 33.1236
-Fold 5: Coverage = 0.8898, Mean MSIS = 31.8332
-✅ Part III: Coverage = 0.8782, MSIS = 34.5068
+Fold 1: Coverage = 0.9060, Mean MSIS = 20.7257
+Fold 2: Coverage = 0.8860, Mean MSIS = 32.1675
+Fold 3: Coverage = 0.8477, Mean MSIS = 54.4545
+Fold 4: Coverage = 0.8477, Mean MSIS = 32.7835
+Fold 5: Coverage = 0.8637, Mean MSIS = 33.2555
+✅ Part III: Coverage = 0.8702, MSIS = 34.6708
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/META_visualizations
 
 ======= Analyzing MSFT =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Fold 1: MAE = 0.002856
@@ -148,7 +162,7 @@ Budget 5: CV-MAE = 0.002798
 Budget 10: CV-MAE = 0.002798
 Budget 20: CV-MAE = 0.002798
 Budget 50: CV-MAE = 0.002798
-✅ Part II: Best budget = 5, CV-MAE = 0.002798
+✅ Part II: Best budget = 10, CV-MAE = 0.002798
 
 Significant coefficients:
   MA5: -1.3163
@@ -156,15 +170,18 @@ Significant coefficients:
   Return_lag2: -0.4481
   H_Volatility_0.0258: 0.2257
   H_Volatility_0.0122: -0.1920
-Fold 1: Coverage = 0.9120, Mean MSIS = 24.6764
-Fold 2: Coverage = 0.8220, Mean MSIS = 21.1385
-Fold 3: Coverage = 0.7415, Mean MSIS = 25.5261
-Fold 4: Coverage = 0.7275, Mean MSIS = 17.7872
-Fold 5: Coverage = 0.8537, Mean MSIS = 15.0386
-✅ Part III: Coverage = 0.8113, MSIS = 20.8350
+Fold 1: Coverage = 0.9060, Mean MSIS = 24.7029
+Fold 2: Coverage = 0.8060, Mean MSIS = 21.8231
+Fold 3: Coverage = 0.7315, Mean MSIS = 25.9300
+Fold 4: Coverage = 0.7234, Mean MSIS = 18.2748
+Fold 5: Coverage = 0.8637, Mean MSIS = 15.0940
+✅ Part III: Coverage = 0.8061, MSIS = 21.1666
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/MSFT_visualizations
 
 ======= Analyzing NFLX =======
-/Users/justin.hsu/Documents/MSExcelFile/src/main.py:22: FutureWarning: YF.download() has changed argument auto_adjust default to True
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:29: FutureWarning: YF.download() has changed argument auto_adjust default to True
   data = yf.download(ticker, start=START_DATE, end=END_DATE, interval="1d")
 [*********************100%***********************]  1 of 1 completed
 Fold 1: MAE = 0.004382
@@ -188,21 +205,41 @@ Significant coefficients:
   Return_lag2: -0.4957
   H_Volatility_0.0413: 0.1897
   Volatility: -0.1547
-Fold 1: Coverage = 0.8980, Mean MSIS = 28.1672
-Fold 2: Coverage = 0.9080, Mean MSIS = 25.4413
-Fold 3: Coverage = 0.8597, Mean MSIS = 39.8445
-Fold 4: Coverage = 0.9018, Mean MSIS = 35.0438
-Fold 5: Coverage = 0.8717, Mean MSIS = 22.7461
-✅ Part III: Coverage = 0.8879, MSIS = 30.2458
+Fold 1: Coverage = 0.8860, Mean MSIS = 28.1449
+Fold 2: Coverage = 0.9180, Mean MSIS = 25.2940
+Fold 3: Coverage = 0.8517, Mean MSIS = 40.2221
+Fold 4: Coverage = 0.8938, Mean MSIS = 35.2936
+Fold 5: Coverage = 0.8597, Mean MSIS = 22.7566
+✅ Part III: Coverage = 0.8818, MSIS = 30.3393
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+✅ 可視化圖表已保存至: result/NFLX_visualizations
+✅ 總結對比圖已保存至: result/summary_comparison.png
 
-==================================================
+============================================================
 📊 Final Results Summary:
 Ticker  CV-MAE_Uncon  Best_Budget  CV-MAE_Best  Coverage      MSIS
-  AAPL      0.003000           10     0.003001  0.820552 23.345953
-  AMZN      0.003461            5     0.003460  0.870645 22.658341
- GOOGL      0.002978            5     0.002977  0.881864 25.879625
-  META      0.003726           10     0.003727  0.878241 34.506791
-  MSFT      0.002796            5     0.002798  0.811329 20.834995
-  NFLX      0.004404           20     0.004408  0.887853 30.245817
+  AAPL      0.003000           20     0.003001  0.827360 23.528278
+  AMZN      0.003461            5     0.003460  0.875055 22.459062
+ GOOGL      0.002978            5     0.002977  0.875450 26.045906
+  META      0.003726           10     0.003727  0.870224 34.670750
+  MSFT      0.002796           10     0.002798  0.806127 21.166626
+  NFLX      0.004404           20     0.004408  0.881842 30.339337
 
-✅ Results saved to result/Project_Results.csv
+✅ 數值結果已保存至: result/Project_Results.csv
+🎨 所有可視化圖表已保存至: result 目錄
+
+============================================================
+📈 Analysis Summary:
+   Average MAE improvement with budget constraint: -0.03%
+   Best performing stock: MSFT
+   Most challenging stock: NFLX
+   Average prediction interval coverage: 85.6%
+   Most common optimal budget: 5
+
+🎯 Key Insights:
+   • L1 regularization with budget constraints improves prediction accuracy
+   • Spline features capture non-linear patterns in stock returns
+   • Prediction intervals provide uncertainty quantification
+   • Different stocks require different levels of regularization
+(pocai) justin.hsu@JustindeMacBook-Pro MSExcelFile % 
