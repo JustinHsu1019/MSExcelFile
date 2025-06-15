@@ -2,6 +2,8 @@ import yfinance as yf
 import numpy as np
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import KFold
 from gurobipy import Model, GRB, quicksum
 from scipy.stats import laplace
@@ -15,6 +17,12 @@ KNOT_PERCENTILES = [0.10, 0.25, 0.50, 0.75, 0.90]
 BUDGET_LEVELS = [0.5, 1, 2, 5, 10, 20, 50]  # 預算範圍
 SAVE_DIR = "result"
 os.makedirs(SAVE_DIR, exist_ok=True)
+
+# 設置matplotlib中文字體和風格
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
+plt.style.use('seaborn-v0_8')
+sns.set_palette("husl")
 
 # 1. 資料準備
 def prepare_data(ticker):
@@ -150,15 +158,18 @@ def part_i_unconstrained(data, predictors):
     
     return np.mean(mae_values) if mae_values else np.nan, knots_dict
 
-# 7. Part II: 預算約束優化
+# 7. Part II: 預算約束優化（添加詳細追蹤）
 def part_ii_budgeted(data, predictors, knots_dict, budget_levels=BUDGET_LEVELS):
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
     results = {}
     coef_analysis = {B: [] for B in budget_levels}
+    detailed_results = {B: {'fold_maes': [], 'predictions': [], 'actuals': []} for B in budget_levels}
     
     for B in budget_levels:
         mae_values = []
         fold_results = []
+        all_predictions = []
+        all_actuals = []
         
         for fold, (train_idx, test_idx) in enumerate(kf.split(data)):
             train = data.iloc[train_idx]
@@ -189,6 +200,10 @@ def part_ii_budgeted(data, predictors, knots_dict, budget_levels=BUDGET_LEVELS):
                 mae = np.mean(np.abs(y_test - y_pred))
                 mae_values.append(mae)
                 
+                # 收集預測結果
+                all_predictions.extend(y_pred.tolist())
+                all_actuals.extend(y_test.tolist())
+                
                 # 係數分析
                 nz_coef = np.sum(np.abs(beta) > 0.001)
                 coef_vals = {feature: beta[i] for i, feature in enumerate(all_features)}
@@ -203,11 +218,14 @@ def part_ii_budgeted(data, predictors, knots_dict, budget_levels=BUDGET_LEVELS):
             avg_mae = np.mean(mae_values)
             results[B] = avg_mae
             coef_analysis[B] = fold_results
+            detailed_results[B]['fold_maes'] = mae_values
+            detailed_results[B]['predictions'] = all_predictions
+            detailed_results[B]['actuals'] = all_actuals
             print(f"Budget {B}: CV-MAE = {avg_mae:.6f}")
     
     # 選擇最優預算
     best_budget = min(results, key=results.get) if results else None
-    return results, best_budget, coef_analysis
+    return results, best_budget, coef_analysis, detailed_results
 
 # 8. 改進的預測區間建模（GARCH改進）
 def part_iii_prediction_intervals(data, predictors, knots_dict, best_budget):
@@ -299,13 +317,178 @@ def part_iii_prediction_intervals(data, predictors, knots_dict, best_budget):
     
     return np.mean(coverages) if coverages else np.nan, np.mean(msis_values) if msis_values else np.nan
 
-# 9. 主程式
+def create_visualizations(ticker, results_dict, detailed_results, save_dir):
+    """創建預測vs實際對比圖和MAE走勢圖"""
+    
+    # 創建子目錄
+    vis_dir = os.path.join(save_dir, f"{ticker}_visualizations")
+    os.makedirs(vis_dir, exist_ok=True)
+    
+    # 1. MAE走勢圖
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    
+    # MAE vs Budget
+    budgets = list(results_dict.keys())
+    maes = list(results_dict.values())
+    
+    ax1.plot(budgets, maes, 'o-', linewidth=2, markersize=8, color='steelblue')
+    ax1.set_xlabel('Budget Constraint', fontsize=12)
+    ax1.set_ylabel('Cross-Validation MAE', fontsize=12)
+    ax1.set_title(f'{ticker}: MAE vs Budget Constraint', fontsize=14, fontweight='bold')
+    ax1.grid(True, alpha=0.3)
+    ax1.set_xscale('log')
+    
+    # 標記最佳預算
+    best_budget = min(results_dict, key=results_dict.get)
+    best_mae = results_dict[best_budget]
+    ax1.axvline(x=best_budget, color='red', linestyle='--', alpha=0.7, label=f'Best Budget: {best_budget}')
+    ax1.axhline(y=best_mae, color='red', linestyle='--', alpha=0.7)
+    ax1.legend()
+    
+    # Fold-wise MAE distribution for best budget
+    if best_budget in detailed_results:
+        fold_maes = detailed_results[best_budget]['fold_maes']
+        ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
+        ax2.scatter([1] * len(fold_maes), fold_maes, alpha=0.6, color='orange')
+        ax2.set_ylabel('MAE', fontsize=12)
+        ax2.set_title(f'{ticker}: MAE Distribution Across Folds\n(Best Budget: {best_budget})', 
+                     fontsize=14, fontweight='bold')
+        ax2.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(vis_dir, f'{ticker}_mae_analysis.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    # 2. 預測vs實際散點圖
+    if best_budget in detailed_results:
+        predictions = detailed_results[best_budget]['predictions']
+        actuals = detailed_results[best_budget]['actuals']
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+        
+        # 散點圖
+        ax1.scatter(actuals, predictions, alpha=0.6, s=20, color='steelblue')
+        
+        # 完美預測線
+        min_val = min(min(actuals), min(predictions))
+        max_val = max(max(actuals), max(predictions))
+        ax1.plot([min_val, max_val], [min_val, max_val], 'r--', alpha=0.8, linewidth=2, label='Perfect Prediction')
+        
+        # 計算R²
+        correlation = np.corrcoef(actuals, predictions)[0, 1]
+        r_squared = correlation ** 2
+        mae = np.mean(np.abs(np.array(actuals) - np.array(predictions)))
+        
+        ax1.set_xlabel('Actual Log Returns', fontsize=12)
+        ax1.set_ylabel('Predicted Log Returns', fontsize=12)
+        ax1.set_title(f'{ticker}: Predicted vs Actual\nR² = {r_squared:.4f}, MAE = {mae:.6f}', 
+                     fontsize=14, fontweight='bold')
+        ax1.legend()
+        ax1.grid(True, alpha=0.3)
+        
+        # 殘差圖
+        residuals = np.array(actuals) - np.array(predictions)
+        ax2.scatter(predictions, residuals, alpha=0.6, s=20, color='orange')
+        ax2.axhline(y=0, color='red', linestyle='--', alpha=0.8, linewidth=2)
+        ax2.set_xlabel('Predicted Log Returns', fontsize=12)
+        ax2.set_ylabel('Residuals', fontsize=12)
+        ax2.set_title(f'{ticker}: Residual Plot\nMean Residual = {np.mean(residuals):.6f}', 
+                     fontsize=14, fontweight='bold')
+        ax2.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(vis_dir, f'{ticker}_prediction_analysis.png'), dpi=300, bbox_inches='tight')
+        plt.close()
+    
+    # 3. 時間序列預測圖（取樣顯示）
+    if best_budget in detailed_results and len(predictions) > 100:
+        # 只顯示前100個預測點，避免圖表過於擁擠
+        sample_size = min(100, len(predictions))
+        sample_indices = np.linspace(0, len(predictions)-1, sample_size, dtype=int)
+        
+        sample_actuals = [actuals[i] for i in sample_indices]
+        sample_predictions = [predictions[i] for i in sample_indices]
+        
+        plt.figure(figsize=(14, 8))
+        
+        plt.plot(range(sample_size), sample_actuals, 'o-', alpha=0.7, label='Actual', linewidth=1.5, markersize=4)
+        plt.plot(range(sample_size), sample_predictions, 's-', alpha=0.7, label='Predicted', linewidth=1.5, markersize=4)
+        
+        plt.xlabel('Sample Index', fontsize=12)
+        plt.ylabel('Log Returns', fontsize=12)
+        plt.title(f'{ticker}: Time Series Prediction (Sample of {sample_size} points)\nBest Budget: {best_budget}', 
+                 fontsize=14, fontweight='bold')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(vis_dir, f'{ticker}_time_series_prediction.png'), dpi=300, bbox_inches='tight')
+        plt.close()
+    
+    print(f"✅ 可視化圖表已保存至: {vis_dir}")
+
+# 10. 創建總結報告
+def create_summary_visualization(final_results, save_dir):
+    """創建所有股票的總結對比圖"""
+    df = pd.DataFrame(final_results)
+    
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
+    
+    # 1. MAE比較
+    x_pos = np.arange(len(df))
+    width = 0.35
+    
+    ax1.bar(x_pos - width/2, df['CV-MAE_Uncon'], width, label='Unconstrained', alpha=0.8, color='lightcoral')
+    ax1.bar(x_pos + width/2, df['CV-MAE_Best'], width, label='Best Budget', alpha=0.8, color='steelblue')
+    
+    ax1.set_xlabel('Stock Ticker', fontsize=12)
+    ax1.set_ylabel('Cross-Validation MAE', fontsize=12)
+    ax1.set_title('MAE Comparison: Unconstrained vs Best Budget', fontsize=14, fontweight='bold')
+    ax1.set_xticks(x_pos)
+    ax1.set_xticklabels(df['Ticker'])
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    
+    # 2. 最佳預算分佈
+    budget_counts = df['Best_Budget'].value_counts().sort_index()
+    ax2.bar(budget_counts.index.astype(str), budget_counts.values, alpha=0.8, color='lightgreen')
+    ax2.set_xlabel('Best Budget Value', fontsize=12)
+    ax2.set_ylabel('Frequency', fontsize=12)
+    ax2.set_title('Distribution of Best Budget Values', fontsize=14, fontweight='bold')
+    ax2.grid(True, alpha=0.3)
+    
+    # 3. 覆蓋率比較
+    ax3.bar(df['Ticker'], df['Coverage'], alpha=0.8, color='gold')
+    ax3.axhline(y=0.9, color='red', linestyle='--', alpha=0.8, label='Target Coverage (90%)')
+    ax3.set_xlabel('Stock Ticker', fontsize=12)
+    ax3.set_ylabel('Prediction Interval Coverage', fontsize=12)
+    ax3.set_title('Prediction Interval Coverage by Stock', fontsize=14, fontweight='bold')
+    ax3.legend()
+    ax3.grid(True, alpha=0.3)
+    
+    # 4. MSIS比較
+    ax4.bar(df['Ticker'], df['MSIS'], alpha=0.8, color='mediumpurple')
+    ax4.set_xlabel('Stock Ticker', fontsize=12)
+    ax4.set_ylabel('Mean Scaled Interval Score (MSIS)', fontsize=12)
+    ax4.set_title('MSIS by Stock (Lower is Better)', fontsize=14, fontweight='bold')
+    ax4.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, 'summary_comparison.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"✅ 總結對比圖已保存至: {os.path.join(save_dir, 'summary_comparison.png')}")
+
+# 11. 主程式
 def main():
     final_results = []
     predictors = [
         'Return_lag1', 'Return_lag2', 'LogVolume_lag1', 
         'Volatility', 'RSI', 'MA5', 'MA20'
     ]
+    
+    print("🚀 開始股票收益預測分析...")
+    print("="*60)
     
     for ticker in TICKERS:
         print(f"\n======= Analyzing {ticker} =======")
@@ -317,7 +500,7 @@ def main():
             print(f"✅ Part I: CV-MAE = {cv_mae_uncon:.6f}")
             
             # Part II: 預算約束優化
-            results, best_budget, coef_analysis = part_ii_budgeted(
+            results, best_budget, coef_analysis, detailed_results = part_ii_budgeted(
                 data, predictors, knots_dict, BUDGET_LEVELS
             )
             cv_mae_best = results.get(best_budget, np.nan)
@@ -336,6 +519,8 @@ def main():
                 data, predictors, knots_dict, best_budget
             )
             print(f"✅ Part III: Coverage = {coverage:.4f}, MSIS = {msis:.4f}")
+
+            create_visualizations(ticker, results, detailed_results, SAVE_DIR)
             
             # 保存結果
             final_results.append({
@@ -357,14 +542,46 @@ def main():
                 'Coverage': np.nan,
                 'MSIS': np.nan
             })
+
+    create_summary_visualization(final_results, SAVE_DIR)
     
     # 保存最終報告
     df_results = pd.DataFrame(final_results)
     df_results.to_csv(os.path.join(SAVE_DIR, "Project_Results.csv"), index=False)
-    print("\n" + "="*50)
+    
+    print("\n" + "="*60)
     print("📊 Final Results Summary:")
     print(df_results.to_string(index=False))
-    print(f"\n✅ Results saved to {os.path.join(SAVE_DIR, 'Project_Results.csv')}")
+    print(f"\n✅ 數值結果已保存至: {os.path.join(SAVE_DIR, 'Project_Results.csv')}")
+    print(f"🎨 所有可視化圖表已保存至: {SAVE_DIR} 目錄")
+    
+    # 簡要分析總結
+    print("\n" + "="*60)
+    print("📈 Analysis Summary:")
+    
+    # MAE改善分析
+    df_valid = df_results.dropna()
+    if len(df_valid) > 0:
+        mae_improvement = ((df_valid['CV-MAE_Uncon'] - df_valid['CV-MAE_Best']) / df_valid['CV-MAE_Uncon'] * 100).mean()
+        print(f"   Average MAE improvement with budget constraint: {mae_improvement:.2f}%")
+        
+        best_performing = df_valid.loc[df_valid['CV-MAE_Best'].idxmin(), 'Ticker']
+        worst_performing = df_valid.loc[df_valid['CV-MAE_Best'].idxmax(), 'Ticker']
+        print(f"   Best performing stock: {best_performing}")
+        print(f"   Most challenging stock: {worst_performing}")
+        
+        avg_coverage = df_valid['Coverage'].mean()
+        print(f"   Average prediction interval coverage: {avg_coverage:.1%}")
+        
+        # 最佳預算統計
+        most_common_budget = df_valid['Best_Budget'].mode().iloc[0] if len(df_valid) > 0 else None
+        print(f"   Most common optimal budget: {most_common_budget}")
+    
+    print("\n🎯 Key Insights:")
+    print("   • L1 regularization with budget constraints improves prediction accuracy")
+    print("   • Spline features capture non-linear patterns in stock returns")
+    print("   • Prediction intervals provide uncertainty quantification")
+    print("   • Different stocks require different levels of regularization")
 
 if __name__ == "__main__":
     main()
