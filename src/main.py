@@ -158,7 +158,7 @@ def part_i_unconstrained(data, predictors):
     
     return np.mean(mae_values) if mae_values else np.nan, knots_dict
 
-# 7. Part II: 預算約束優化（添加詳細追蹤）
+# 7. Part II: 預算約束優化
 def part_ii_budgeted(data, predictors, knots_dict, budget_levels=BUDGET_LEVELS):
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
     results = {}
@@ -227,7 +227,7 @@ def part_ii_budgeted(data, predictors, knots_dict, budget_levels=BUDGET_LEVELS):
     best_budget = min(results, key=results.get) if results else None
     return results, best_budget, coef_analysis, detailed_results
 
-# 8. 改進的預測區間建模（GARCH改進）
+# 8. 改進的預測區間建模（GARCH改進, Bonus）
 def part_iii_prediction_intervals(data, predictors, knots_dict, best_budget):
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
     coverages = []
@@ -479,6 +479,168 @@ def create_summary_visualization(final_results, save_dir):
     
     print(f"✅ 總結對比圖已保存至: {os.path.join(save_dir, 'summary_comparison.png')}")
 
+def analyze_top_features(coef_analysis, best_budget, all_features, top_k=5):
+    """
+    分析最重要的特徵
+    
+    Parameters:
+    - coef_analysis: 係數分析結果
+    - best_budget: 最佳預算
+    - all_features: 所有特徵名稱列表
+    - top_k: 回傳前k個重要特徵
+    """
+    
+    if best_budget not in coef_analysis:
+        return None
+    
+    # 收集所有fold的係數
+    all_coefs = {}
+    for fold_result in coef_analysis[best_budget]:
+        for feature, coef_val in fold_result['coefs'].items():
+            if feature not in all_coefs:
+                all_coefs[feature] = []
+            all_coefs[feature].append(coef_val)
+    
+    # 計算每個特徵的平均係數和重要性
+    feature_importance = {}
+    for feature, coef_list in all_coefs.items():
+        avg_coef = np.mean(coef_list)
+        abs_avg_coef = abs(avg_coef)
+        std_coef = np.std(coef_list)
+        
+        feature_importance[feature] = {
+            'avg_coef': avg_coef,
+            'abs_coef': abs_avg_coef,
+            'std_coef': std_coef,
+            'importance_score': abs_avg_coef  # 以絕對值作為重要性指標
+        }
+    
+    # 按重要性排序
+    sorted_features = sorted(
+        feature_importance.items(), 
+        key=lambda x: x[1]['importance_score'], 
+        reverse=True
+    )
+    
+    # 取前k個重要特徵
+    top_features = sorted_features[:top_k]
+    
+    return top_features, feature_importance
+
+def create_top_features_visualization(ticker, top_features, save_dir):
+    """創建Top Features可視化圖表"""
+    
+    if not top_features:
+        return
+    
+    # 準備數據
+    feature_names = [item[0] for item in top_features]
+    importance_scores = [item[1]['importance_score'] for item in top_features]
+    avg_coefs = [item[1]['avg_coef'] for item in top_features]
+    
+    # 簡化特徵名稱顯示
+    display_names = []
+    for name in feature_names:
+        if name.startswith('H_'):
+            # Hinge特徵簡化顯示
+            parts = name.split('_')
+            if len(parts) >= 3:
+                display_names.append(f"{parts[1]}_H{parts[2][:4]}")
+            else:
+                display_names.append(name[:15])
+        else:
+            display_names.append(name)
+    
+    # 創建圖表
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    
+    # 1. 特徵重要性條形圖
+    colors = ['red' if coef < 0 else 'green' for coef in avg_coefs]
+    bars = ax1.barh(range(len(display_names)), importance_scores, color=colors, alpha=0.7)
+    
+    ax1.set_yticks(range(len(display_names)))
+    ax1.set_yticklabels(display_names)
+    ax1.set_xlabel('Feature Importance (|Coefficient|)', fontsize=12)
+    ax1.set_title(f'{ticker}: Top {len(top_features)} Most Important Features', fontsize=14, fontweight='bold')
+    ax1.grid(True, alpha=0.3, axis='x')
+    
+    # 添加數值標籤
+    for i, (bar, score) in enumerate(zip(bars, importance_scores)):
+        ax1.text(score + max(importance_scores) * 0.01, i, f'{score:.4f}', 
+                va='center', fontsize=10)
+    
+    # 2. 係數值（含正負）
+    colors_signed = ['red' if coef < 0 else 'green' for coef in avg_coefs]
+    bars2 = ax2.barh(range(len(display_names)), avg_coefs, color=colors_signed, alpha=0.7)
+    
+    ax2.set_yticks(range(len(display_names)))
+    ax2.set_yticklabels(display_names)
+    ax2.set_xlabel('Average Coefficient Value', fontsize=12)
+    ax2.set_title(f'{ticker}: Coefficient Direction & Magnitude', fontsize=14, fontweight='bold')
+    ax2.axvline(x=0, color='black', linestyle='-', alpha=0.5)
+    ax2.grid(True, alpha=0.3, axis='x')
+    
+    # 添加數值標籤
+    for i, (bar, coef) in enumerate(zip(bars2, avg_coefs)):
+        offset = max(abs(min(avg_coefs)), abs(max(avg_coefs))) * 0.02
+        x_pos = coef + offset if coef >= 0 else coef - offset
+        ax2.text(x_pos, i, f'{coef:.4f}', va='center', fontsize=10)
+    
+    plt.tight_layout()
+    
+    # 保存圖表
+    vis_dir = os.path.join(save_dir, f"{ticker}_visualizations")
+    os.makedirs(vis_dir, exist_ok=True)
+    plt.savefig(os.path.join(vis_dir, f'{ticker}_top_features.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    print(f"✅ {ticker} Top Features 分析圖已保存")
+
+def generate_feature_interpretation(ticker, top_features):
+    """生成特徵解釋報告"""
+    
+    print(f"\n📊 {ticker} - Top Features Analysis:")
+    print("="*50)
+    
+    for i, (feature_name, stats) in enumerate(top_features, 1):
+        coef = stats['avg_coef']
+        importance = stats['importance_score']
+        
+        # 特徵類型判斷
+        if feature_name.startswith('H_'):
+            feature_type = "Spline Hinge Feature"
+            base_feature = feature_name.split('_')[1]
+            knot_value = feature_name.split('_')[2][:6]
+        else:
+            feature_type = "Base Feature"
+            base_feature = feature_name
+            knot_value = ""
+        
+        # 影響方向
+        direction = "正向影響 ↗️" if coef > 0 else "負向影響 ↘️"
+        
+        print(f"{i}. {feature_name}")
+        print(f"   類型: {feature_type}")
+        if knot_value:
+            print(f"   節點值: {knot_value}")
+        print(f"   係數: {coef:.6f}")
+        print(f"   重要性: {importance:.6f}")
+        print(f"   影響: {direction}")
+        
+        # 經濟意義解釋
+        if base_feature == 'Return_lag1':
+            print(f"   意義: 前一日收益率對今日收益的{'正向' if coef > 0 else '反向'}影響")
+        elif base_feature == 'Volatility':
+            print(f"   意義: 波動率對收益率產生{'正向' if coef > 0 else '負向'}效應")
+        elif base_feature == 'RSI':
+            print(f"   意義: RSI技術指標呈現{'買入' if coef > 0 else '賣出'}信號")
+        elif base_feature == 'LogVolume_lag1':
+            print(f"   意義: 前日交易量對今日收益{'正向' if coef > 0 else '負向'}預測")
+        elif 'MA' in base_feature:
+            print(f"   意義: 移動平均線呈現{'多頭' if coef > 0 else '空頭'}趨勢信號")
+        
+        print()
+
 # 11. 主程式
 def main():
     final_results = []
@@ -506,6 +668,16 @@ def main():
             cv_mae_best = results.get(best_budget, np.nan)
             print(f"✅ Part II: Best budget = {best_budget}, CV-MAE = {cv_mae_best:.6f}")
             
+            # 先創建 final_results 條目
+            result_entry = {
+                'Ticker': ticker,
+                'CV-MAE_Uncon': cv_mae_uncon,
+                'Best_Budget': best_budget,
+                'CV-MAE_Best': cv_mae_best,
+                'Coverage': np.nan,
+                'MSIS': np.nan
+            }
+            
             # 輸出重要係數解讀
             if best_budget and coef_analysis.get(best_budget):
                 coef_sample = coef_analysis[best_budget][0]['coefs']
@@ -513,24 +685,46 @@ def main():
                 for feature, coef_val in sorted(coef_sample.items(), key=lambda x: abs(x[1]), reverse=True)[:5]:
                     if abs(coef_val) > 0.001:
                         print(f"  {feature}: {coef_val:.4f}")
-            
+
+                # Top Features 分析
+                # 重新構建hinge特徵以獲取正確的特徵名稱
+                train_sample = add_all_hinge_features(data, knots_dict)
+                base_features = predictors.copy()
+                all_columns = list(train_sample.columns)
+                hinge_features = [col for col in all_columns if col.startswith('H_')]
+                all_features = base_features + hinge_features
+                
+                # 分析Top Features
+                top_features, feature_importance = analyze_top_features(
+                    coef_analysis, best_budget, all_features, top_k=5
+                )
+                
+                if top_features:
+                    # 創建可視化
+                    create_top_features_visualization(ticker, top_features, SAVE_DIR)
+                    
+                    # 生成解釋報告
+                    generate_feature_interpretation(ticker, top_features)
+                    
+                    # 更新結果條目
+                    result_entry['Top_Feature'] = top_features[0][0]  # 最重要特徵名稱
+                    result_entry['Top_Importance'] = top_features[0][1]['importance_score']  # 重要性分數
+
             # Part III: 預測區間
             coverage, msis = part_iii_prediction_intervals(
                 data, predictors, knots_dict, best_budget
             )
             print(f"✅ Part III: Coverage = {coverage:.4f}, MSIS = {msis:.4f}")
 
+            # 更新Coverage和MSIS
+            result_entry['Coverage'] = coverage
+            result_entry['MSIS'] = msis
+
+            # 創建可視化
             create_visualizations(ticker, results, detailed_results, SAVE_DIR)
             
             # 保存結果
-            final_results.append({
-                'Ticker': ticker,
-                'CV-MAE_Uncon': cv_mae_uncon,
-                'Best_Budget': best_budget,
-                'CV-MAE_Best': cv_mae_best,
-                'Coverage': coverage,
-                'MSIS': msis
-            })
+            final_results.append(result_entry)
             
         except Exception as e:
             print(f"❌ Error processing {ticker}: {str(e)}")
@@ -540,7 +734,9 @@ def main():
                 'Best_Budget': np.nan,
                 'CV-MAE_Best': np.nan,
                 'Coverage': np.nan,
-                'MSIS': np.nan
+                'MSIS': np.nan,
+                'Top_Feature': 'N/A',
+                'Top_Importance': np.nan
             })
 
     create_summary_visualization(final_results, SAVE_DIR)
@@ -560,7 +756,7 @@ def main():
     print("📈 Analysis Summary:")
     
     # MAE改善分析
-    df_valid = df_results.dropna()
+    df_valid = df_results.dropna(subset=['CV-MAE_Best'])
     if len(df_valid) > 0:
         mae_improvement = ((df_valid['CV-MAE_Uncon'] - df_valid['CV-MAE_Best']) / df_valid['CV-MAE_Uncon'] * 100).mean()
         print(f"   Average MAE improvement with budget constraint: {mae_improvement:.2f}%")
@@ -576,12 +772,19 @@ def main():
         # 最佳預算統計
         most_common_budget = df_valid['Best_Budget'].mode().iloc[0] if len(df_valid) > 0 else None
         print(f"   Most common optimal budget: {most_common_budget}")
+        
+        # Top Features 統計 (Bonus)
+        top_features_valid = df_valid.dropna(subset=['Top_Feature'])
+        if len(top_features_valid) > 0:
+            most_important_overall = top_features_valid.loc[top_features_valid['Top_Importance'].idxmax()]
+            print(f"   Most important feature overall: {most_important_overall['Top_Feature']} ({most_important_overall['Ticker']})")
     
     print("\n🎯 Key Insights:")
     print("   • L1 regularization with budget constraints improves prediction accuracy")
     print("   • Spline features capture non-linear patterns in stock returns")
     print("   • Prediction intervals provide uncertainty quantification")
     print("   • Different stocks require different levels of regularization")
+    print("   • Feature importance analysis reveals key predictive factors")  # 新增
 
 if __name__ == "__main__":
     main()

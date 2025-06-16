@@ -1,4 +1,4 @@
-(pocai) justin.hsu@JustindeMacBook-Pro MSExcelFile % python3 src/main.py
+(pocai) justin.hsu@JustindeMacBook-Pro MSExcelFile % python3 src/main.py 
 🚀 開始股票收益預測分析...
 ============================================================
 
@@ -10,7 +10,7 @@ Set parameter Username
 Set parameter LicenseID to value 2678152
 Academic license - for non-commercial use only - expires 2026-06-14
 Fold 1: MAE = 0.003006
-Fold 2: MAE = 0.002840
+Fold 2: MAE = 0.002841
 Fold 3: MAE = 0.003030
 Fold 4: MAE = 0.003038
 Fold 5: MAE = 0.003085
@@ -26,17 +26,57 @@ Budget 50: CV-MAE = 0.003001
 
 Significant coefficients:
   MA5: -1.3009
-  Return_lag1: -0.7701
-  Return_lag2: -0.4334
-  H_Volatility_0.0085: 0.2456
-  H_MA5_-0.0219: 0.1514
-Fold 1: Coverage = 0.8880, Mean MSIS = 20.3591
-Fold 2: Coverage = 0.8480, Mean MSIS = 27.9394
-Fold 3: Coverage = 0.7816, Mean MSIS = 29.7824
-Fold 4: Coverage = 0.7856, Mean MSIS = 21.6410
-Fold 5: Coverage = 0.8337, Mean MSIS = 17.9169
-✅ Part III: Coverage = 0.8274, MSIS = 23.5283
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  Return_lag1: -0.7700
+  Return_lag2: -0.4335
+  H_Volatility_0.0085: 0.2458
+  H_MA5_-0.0219: 0.1516
+✅ AAPL Top Features 分析圖已保存
+
+📊 AAPL - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.310154
+   重要性: 1.310154
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.776102
+   重要性: 0.776102
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.436247
+   重要性: 0.436247
+   影響: 負向影響 ↘️
+
+4. H_Volatility_0.0085
+   類型: Spline Hinge Feature
+   節點值: 0.0085
+   係數: 0.193404
+   重要性: 0.193404
+   影響: 正向影響 ↗️
+   意義: 波動率對收益率產生正向效應
+
+5. H_Volatility_0.0060
+   類型: Spline Hinge Feature
+   節點值: 0.0060
+   係數: -0.175609
+   重要性: 0.175609
+   影響: 負向影響 ↘️
+   意義: 波動率對收益率產生負向效應
+
+Fold 1: Coverage = 0.8780, Mean MSIS = 20.8685
+Fold 2: Coverage = 0.8480, Mean MSIS = 27.7061
+Fold 3: Coverage = 0.7695, Mean MSIS = 29.0075
+Fold 4: Coverage = 0.7996, Mean MSIS = 21.3967
+Fold 5: Coverage = 0.8216, Mean MSIS = 17.8804
+✅ Part III: Coverage = 0.8234, MSIS = 23.3726
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/AAPL_visualizations
 
@@ -65,13 +105,51 @@ Significant coefficients:
   Return_lag2: -0.4589
   H_Return_lag2_0.0111: -0.1830
   H_Volatility_0.0067: -0.1511
-Fold 1: Coverage = 0.8800, Mean MSIS = 19.1175
-Fold 2: Coverage = 0.8580, Mean MSIS = 22.0100
-Fold 3: Coverage = 0.8497, Mean MSIS = 30.8412
-Fold 4: Coverage = 0.8717, Mean MSIS = 24.9289
-Fold 5: Coverage = 0.9158, Mean MSIS = 15.4054
-✅ Part III: Coverage = 0.8751, MSIS = 22.4591
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+✅ AMZN Top Features 分析圖已保存
+
+📊 AMZN - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.350430
+   重要性: 1.350430
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.738349
+   重要性: 0.738349
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.461517
+   重要性: 0.461517
+   影響: 負向影響 ↘️
+
+4. H_Return_lag2_0.0111
+   類型: Spline Hinge Feature
+   節點值: lag2
+   係數: -0.186808
+   重要性: 0.186808
+   影響: 負向影響 ↘️
+
+5. H_Return_lag2_0.0009
+   類型: Spline Hinge Feature
+   節點值: lag2
+   係數: 0.154138
+   重要性: 0.154138
+   影響: 正向影響 ↗️
+
+Fold 1: Coverage = 0.8840, Mean MSIS = 19.2948
+Fold 2: Coverage = 0.8540, Mean MSIS = 21.4968
+Fold 3: Coverage = 0.8417, Mean MSIS = 29.7546
+Fold 4: Coverage = 0.8798, Mean MSIS = 24.2624
+Fold 5: Coverage = 0.9118, Mean MSIS = 15.7925
+✅ Part III: Coverage = 0.8743, MSIS = 22.1188
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/AMZN_visualizations
 
@@ -92,7 +170,7 @@ Budget 5: CV-MAE = 0.002977
 Budget 10: CV-MAE = 0.002977
 Budget 20: CV-MAE = 0.002977
 Budget 50: CV-MAE = 0.002977
-✅ Part II: Best budget = 5, CV-MAE = 0.002977
+✅ Part II: Best budget = 10, CV-MAE = 0.002977
 
 Significant coefficients:
   MA5: -1.3157
@@ -100,13 +178,53 @@ Significant coefficients:
   Return_lag2: -0.4415
   H_Volatility_0.0128: 0.1720
   H_MA5_0.0081: -0.1168
-Fold 1: Coverage = 0.8600, Mean MSIS = 21.0644
-Fold 2: Coverage = 0.8920, Mean MSIS = 32.8772
-Fold 3: Coverage = 0.8457, Mean MSIS = 31.1982
-Fold 4: Coverage = 0.8798, Mean MSIS = 19.3356
-Fold 5: Coverage = 0.8998, Mean MSIS = 25.7505
-✅ Part III: Coverage = 0.8755, MSIS = 26.0459
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+✅ GOOGL Top Features 分析圖已保存
+
+📊 GOOGL - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.307744
+   重要性: 1.307744
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.695233
+   重要性: 0.695233
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.421830
+   重要性: 0.421830
+   影響: 負向影響 ↘️
+
+4. H_Volatility_0.0188
+   類型: Spline Hinge Feature
+   節點值: 0.0188
+   係數: -0.142035
+   重要性: 0.142035
+   影響: 負向影響 ↘️
+   意義: 波動率對收益率產生負向效應
+
+5. H_Volatility_0.0277
+   類型: Spline Hinge Feature
+   節點值: 0.0277
+   係數: 0.132603
+   重要性: 0.132603
+   影響: 正向影響 ↗️
+   意義: 波動率對收益率產生正向效應
+
+Fold 1: Coverage = 0.8440, Mean MSIS = 21.2187
+Fold 2: Coverage = 0.8820, Mean MSIS = 32.6206
+Fold 3: Coverage = 0.8477, Mean MSIS = 31.6611
+Fold 4: Coverage = 0.8818, Mean MSIS = 18.7056
+Fold 5: Coverage = 0.9058, Mean MSIS = 25.7066
+✅ Part III: Coverage = 0.8723, MSIS = 25.9833
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/GOOGL_visualizations
 
@@ -127,21 +245,61 @@ Budget 5: CV-MAE = 0.003727
 Budget 10: CV-MAE = 0.003727
 Budget 20: CV-MAE = 0.003727
 Budget 50: CV-MAE = 0.003727
-✅ Part II: Best budget = 10, CV-MAE = 0.003727
+✅ Part II: Best budget = 5, CV-MAE = 0.003727
 
 Significant coefficients:
   MA5: -1.4109
   Return_lag1: -0.7379
   Return_lag2: -0.4956
-  H_MA5_-0.0255: 0.2113
+  H_MA5_-0.0255: 0.2112
   H_Return_lag1_-0.0089: 0.1432
-Fold 1: Coverage = 0.9060, Mean MSIS = 20.7257
-Fold 2: Coverage = 0.8860, Mean MSIS = 32.1675
-Fold 3: Coverage = 0.8477, Mean MSIS = 54.4545
-Fold 4: Coverage = 0.8477, Mean MSIS = 32.7835
-Fold 5: Coverage = 0.8637, Mean MSIS = 33.2555
-✅ Part III: Coverage = 0.8702, MSIS = 34.6708
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+✅ META Top Features 分析圖已保存
+
+📊 META - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.406606
+   重要性: 1.406606
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.712248
+   重要性: 0.712248
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.487671
+   重要性: 0.487671
+   影響: 負向影響 ↘️
+
+4. H_MA5_-0.0255
+   類型: Spline Hinge Feature
+   節點值: -0.025
+   係數: 0.203050
+   重要性: 0.203050
+   影響: 正向影響 ↗️
+   意義: 移動平均線呈現多頭趨勢信號
+
+5. H_Volatility_0.0158
+   類型: Spline Hinge Feature
+   節點值: 0.0158
+   係數: -0.129652
+   重要性: 0.129652
+   影響: 負向影響 ↘️
+   意義: 波動率對收益率產生負向效應
+
+Fold 1: Coverage = 0.9020, Mean MSIS = 21.6001
+Fold 2: Coverage = 0.8840, Mean MSIS = 32.1752
+Fold 3: Coverage = 0.8557, Mean MSIS = 52.3689
+Fold 4: Coverage = 0.8477, Mean MSIS = 32.6544
+Fold 5: Coverage = 0.8597, Mean MSIS = 32.3350
+✅ Part III: Coverage = 0.8698, MSIS = 34.2208
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/META_visualizations
 
@@ -169,14 +327,54 @@ Significant coefficients:
   Return_lag1: -0.7339
   Return_lag2: -0.4481
   H_Volatility_0.0258: 0.2257
-  H_Volatility_0.0122: -0.1920
-Fold 1: Coverage = 0.9060, Mean MSIS = 24.7029
-Fold 2: Coverage = 0.8060, Mean MSIS = 21.8231
-Fold 3: Coverage = 0.7315, Mean MSIS = 25.9300
-Fold 4: Coverage = 0.7234, Mean MSIS = 18.2748
-Fold 5: Coverage = 0.8637, Mean MSIS = 15.0940
-✅ Part III: Coverage = 0.8061, MSIS = 21.1666
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+  H_Volatility_0.0122: -0.1919
+✅ MSFT Top Features 分析圖已保存
+
+📊 MSFT - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.274148
+   重要性: 1.274148
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.753247
+   重要性: 0.753247
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.437612
+   重要性: 0.437612
+   影響: 負向影響 ↘️
+
+4. H_Volatility_0.0081
+   類型: Spline Hinge Feature
+   節點值: 0.0081
+   係數: 0.253114
+   重要性: 0.253114
+   影響: 正向影響 ↗️
+   意義: 波動率對收益率產生正向效應
+
+5. H_Volatility_0.0122
+   類型: Spline Hinge Feature
+   節點值: 0.0122
+   係數: -0.220039
+   重要性: 0.220039
+   影響: 負向影響 ↘️
+   意義: 波動率對收益率產生負向效應
+
+Fold 1: Coverage = 0.9060, Mean MSIS = 24.7859
+Fold 2: Coverage = 0.7980, Mean MSIS = 22.0869
+Fold 3: Coverage = 0.7154, Mean MSIS = 26.1645
+Fold 4: Coverage = 0.7475, Mean MSIS = 17.1751
+Fold 5: Coverage = 0.8557, Mean MSIS = 14.9690
+✅ Part III: Coverage = 0.8045, MSIS = 21.0382
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/MSFT_visualizations
 
@@ -205,26 +403,66 @@ Significant coefficients:
   Return_lag2: -0.4957
   H_Volatility_0.0413: 0.1897
   Volatility: -0.1547
-Fold 1: Coverage = 0.8860, Mean MSIS = 28.1449
-Fold 2: Coverage = 0.9180, Mean MSIS = 25.2940
-Fold 3: Coverage = 0.8517, Mean MSIS = 40.2221
-Fold 4: Coverage = 0.8938, Mean MSIS = 35.2936
-Fold 5: Coverage = 0.8597, Mean MSIS = 22.7566
-✅ Part III: Coverage = 0.8818, MSIS = 30.3393
-/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:352: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
+✅ NFLX Top Features 分析圖已保存
+
+📊 NFLX - Top Features Analysis:
+==================================================
+1. MA5
+   類型: Base Feature
+   係數: -1.362920
+   重要性: 1.362920
+   影響: 負向影響 ↘️
+   意義: 移動平均線呈現空頭趨勢信號
+
+2. Return_lag1
+   類型: Base Feature
+   係數: -0.711249
+   重要性: 0.711249
+   影響: 負向影響 ↘️
+   意義: 前一日收益率對今日收益的反向影響
+
+3. Return_lag2
+   類型: Base Feature
+   係數: -0.494396
+   重要性: 0.494396
+   影響: 負向影響 ↘️
+
+4. H_Volatility_0.0129
+   類型: Spline Hinge Feature
+   節點值: 0.0129
+   係數: 0.184560
+   重要性: 0.184560
+   影響: 正向影響 ↗️
+   意義: 波動率對收益率產生正向效應
+
+5. H_Volatility_0.0182
+   類型: Spline Hinge Feature
+   節點值: 0.0182
+   係數: -0.159067
+   重要性: 0.159067
+   影響: 負向影響 ↘️
+   意義: 波動率對收益率產生負向效應
+
+Fold 1: Coverage = 0.8920, Mean MSIS = 28.6988
+Fold 2: Coverage = 0.9140, Mean MSIS = 25.2893
+Fold 3: Coverage = 0.8497, Mean MSIS = 39.4762
+Fold 4: Coverage = 0.9118, Mean MSIS = 35.5365
+Fold 5: Coverage = 0.8818, Mean MSIS = 22.5226
+✅ Part III: Coverage = 0.8899, MSIS = 30.3020
+/Users/justin.hsu/Downloads/MSExcelFile/src/main.py:351: MatplotlibDeprecationWarning: The 'labels' parameter of boxplot() has been renamed 'tick_labels' since Matplotlib 3.9; support for the old name will be dropped in 3.11.
   ax2.boxplot([fold_maes], labels=[f'Budget {best_budget}'])
 ✅ 可視化圖表已保存至: result/NFLX_visualizations
 ✅ 總結對比圖已保存至: result/summary_comparison.png
 
 ============================================================
 📊 Final Results Summary:
-Ticker  CV-MAE_Uncon  Best_Budget  CV-MAE_Best  Coverage      MSIS
-  AAPL      0.003000           20     0.003001  0.827360 23.528278
-  AMZN      0.003461            5     0.003460  0.875055 22.459062
- GOOGL      0.002978            5     0.002977  0.875450 26.045906
-  META      0.003726           10     0.003727  0.870224 34.670750
-  MSFT      0.002796           10     0.002798  0.806127 21.166626
-  NFLX      0.004404           20     0.004408  0.881842 30.339337
+Ticker  CV-MAE_Uncon  Best_Budget  CV-MAE_Best  Coverage      MSIS Top_Feature  Top_Importance
+  AAPL      0.003000           20     0.003001  0.823356 23.372561         MA5        1.310154
+  AMZN      0.003461            5     0.003460  0.874253 22.118834         MA5        1.350430
+ GOOGL      0.002978           10     0.002977  0.872254 25.983264         MA5        1.307744
+  META      0.003726            5     0.003727  0.869825 34.220831         MA5        1.406606
+  MSFT      0.002796           10     0.002798  0.804527 21.038205         MA5        1.274148
+  NFLX      0.004404           20     0.004408  0.889857 30.302040         MA5        1.362920
 
 ✅ 數值結果已保存至: result/Project_Results.csv
 🎨 所有可視化圖表已保存至: result 目錄
@@ -236,10 +474,12 @@ Ticker  CV-MAE_Uncon  Best_Budget  CV-MAE_Best  Coverage      MSIS
    Most challenging stock: NFLX
    Average prediction interval coverage: 85.6%
    Most common optimal budget: 5
+   Most important feature overall: MA5 (META)
 
 🎯 Key Insights:
    • L1 regularization with budget constraints improves prediction accuracy
    • Spline features capture non-linear patterns in stock returns
    • Prediction intervals provide uncertainty quantification
    • Different stocks require different levels of regularization
+   • Feature importance analysis reveals key predictive factors
 (pocai) justin.hsu@JustindeMacBook-Pro MSExcelFile % 
