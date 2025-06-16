@@ -778,13 +778,6 @@ def main():
         if len(top_features_valid) > 0:
             most_important_overall = top_features_valid.loc[top_features_valid['Top_Importance'].idxmax()]
             print(f"   Most important feature overall: {most_important_overall['Top_Feature']} ({most_important_overall['Ticker']})")
-    
-    print("\n🎯 Key Insights:")
-    print("   • L1 regularization with budget constraints improves prediction accuracy")
-    print("   • Spline features capture non-linear patterns in stock returns")
-    print("   • Prediction intervals provide uncertainty quantification")
-    print("   • Different stocks require different levels of regularization")
-    print("   • Feature importance analysis reveals key predictive factors")  # 新增
 
 if __name__ == "__main__":
     main()
